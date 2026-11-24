@@ -1509,7 +1509,7 @@ MonoBehaviour:
   regadera: {fileID: 1464275002}
   encimera: {fileID: 807979990}
   puntoMano: {fileID: 2061156022}
-  velocidad: 2
+  velocidad: 5
   velocidadGiro: 180
   distanciaLlegada: 0.15
   duracionAccion: 1
