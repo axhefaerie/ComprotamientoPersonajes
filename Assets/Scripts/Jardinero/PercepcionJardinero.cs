@@ -13,8 +13,9 @@ public class PercepcionJardinero : MonoBehaviour
     {
         Maceta mejor = null;
         float mejorDist = float.MaxValue;
+        Vector2 origen = transform.position;
 
-        int n = Physics2D.OverlapCircleNonAlloc(transform.position, radio, buffer);
+        int n = Physics2D.OverlapCircleNonAlloc(origen, radio, buffer);
         for (int i = 0; i < n; i++)
         {
             var maceta = buffer[i].GetComponentInParent<Maceta>();
@@ -30,8 +31,9 @@ public class PercepcionJardinero : MonoBehaviour
     {
         ZonaInteraccion mejor = null;
         float mejorDist = float.MaxValue;
+        Vector2 origen = transform.position;
 
-        int n = Physics2D.OverlapCircleNonAlloc(transform.position, radio, buffer);
+        int n = Physics2D.OverlapCircleNonAlloc(origen, radio, buffer);
         for (int i = 0; i < n; i++)
         {
             var zona = buffer[i].GetComponentInParent<ZonaInteraccion>();

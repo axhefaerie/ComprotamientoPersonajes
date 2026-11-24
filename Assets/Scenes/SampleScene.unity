@@ -419,7 +419,7 @@ Transform:
   m_GameObject: {fileID: 352360479}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.12, y: -0.27, z: 0}
+  m_LocalPosition: {x: -0.26, y: -0.13, z: 0}
   m_LocalScale: {x: 0.98282886, y: 0.98282886, z: 0.98282886}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -469,9 +469,27 @@ MonoBehaviour:
       graph:
         rid: 891130425675612234
       nodes:
+      - name: Buscar
+        id: cd597efa-85ed-40a3-bb6d-f33993e783d9
+        position: {x: 357, y: -170}
+        node:
+          rid: 891130425675612241
+        references:
+        - fieldName: Action
+          value:
+            rid: 891130544744300636
+          fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        parentIds:
+        - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
+        childIds:
+        - 596fe268-49ee-49f4-a69a-dc8d50d8d66d
+        - f4f95164-9c7c-4409-9791-584bc9ba2e37
+        - 55bb64b4-b191-4bca-a18b-e6eac230e714
+        - 47566c96-0ee6-4531-a7ce-365d6ce7a56e
       - name: Esperar
         id: 905d4239-46ad-4d08-a2a7-6ee597b390fc
-        position: {x: -395, y: -138}
+        position: {x: -440, y: -186}
         node:
           rid: 891130425675612239
         references:
@@ -481,35 +499,28 @@ MonoBehaviour:
           fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
             Culture=neutral, PublicKeyToken=null
         parentIds:
-        - c69d3221-adec-44cc-91f2-2bf5c6806144
-        childIds:
-        - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
-      - name: Buscar
-        id: cd597efa-85ed-40a3-bb6d-f33993e783d9
-        position: {x: 344, y: -180}
-        node:
-          rid: 891130425675612241
-        references:
-        - fieldName: Action
-          value:
-            rid: -2
-          fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
-            Culture=neutral, PublicKeyToken=null
-        parentIds:
-        - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
-        - 6235486c-e116-4cd6-864d-f3f299692f40
         - d82c391d-7d71-416c-89ed-22303cae3041
         - 7b1a8eea-ed48-4e24-835d-9c8011e2d2e1
         - e34b0e08-04e5-433a-8be8-ca851ad567c5
+        - 6235486c-e116-4cd6-864d-f3f299692f40
         childIds:
-        - 596fe268-49ee-49f4-a69a-dc8d50d8d66d
-        - f4f95164-9c7c-4409-9791-584bc9ba2e37
-        - 55bb64b4-b191-4bca-a18b-e6eac230e714
-        - 47566c96-0ee6-4531-a7ce-365d6ce7a56e
-        - c69d3221-adec-44cc-91f2-2bf5c6806144
+        - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
+      - name: Prueba
+        id: 04b3a5d0-f9ce-4065-8959-9d95febc60e4
+        position: {x: -819, y: -181}
+        node:
+          rid: 891130544744300631
+        references:
+        - fieldName: Action
+          value:
+            rid: 891130544744300632
+          fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
+            Culture=neutral, PublicKeyToken=null
+        parentIds: []
+        childIds: []
       - name: IrARecargar
         id: 4f23fcd1-807c-4dc4-97c7-56695e3a181a
-        position: {x: 660, y: -65}
+        position: {x: 998, y: -156}
         node:
           rid: 891130425675612238
         references:
@@ -522,9 +533,9 @@ MonoBehaviour:
         - 596fe268-49ee-49f4-a69a-dc8d50d8d66d
         childIds:
         - 7380ea0e-5067-4a1a-b45a-eb28d032c349
-      - name: Atencion
+      - name: atencion
         id: 02047930-f3f1-4700-b8b5-eab80f6b4ecd
-        position: {x: -46, y: -245}
+        position: {x: -19, y: -249}
         node:
           rid: 891130425675612242
         references:
@@ -544,7 +555,7 @@ MonoBehaviour:
         - cd597efa-85ed-40a3-bb6d-f33993e783d9
       - name: Recargar
         id: 3e053fb3-a844-4696-b66d-f5844fb484ad
-        position: {x: 982, y: 257}
+        position: {x: 1297, y: 57}
         node:
           rid: 891130425675612245
         references:
@@ -559,7 +570,7 @@ MonoBehaviour:
         - 6235486c-e116-4cd6-864d-f3f299692f40
       - name: IrARecoger
         id: c26d61e3-a84e-4b12-b2c0-731ef08262ce
-        position: {x: 332, y: 257}
+        position: {x: 559, y: 282}
         node:
           rid: 2592758923749228547
         references:
@@ -574,7 +585,7 @@ MonoBehaviour:
         - 6623fd55-e493-4999-b6c5-e2f8053162e1
       - name: Recoger
         id: 8cdff674-9554-4a4a-8c12-0fd09d65b9a2
-        position: {x: 454, y: 676}
+        position: {x: 548, y: 681}
         node:
           rid: 2592758923749228549
         references:
@@ -589,7 +600,7 @@ MonoBehaviour:
         - 76396964-87bc-47a1-9a24-c26c4f8165b2
       - name: IrAEncimera
         id: cd112560-6f66-46b2-bd2f-ab3c8f32c52e
-        position: {x: -132, y: 579}
+        position: {x: -97, y: 656}
         node:
           rid: 2592758923749228551
         references:
@@ -604,7 +615,7 @@ MonoBehaviour:
         - 968af0a8-0b08-4626-ab89-e633e652f379
       - name: Depositar
         id: 3e7703a4-e78f-44b7-bfac-be4fc2034f27
-        position: {x: -1, y: 417}
+        position: {x: 17, y: 351}
         node:
           rid: 2592758923749228553
         references:
@@ -634,7 +645,7 @@ MonoBehaviour:
         - 24029301-0ea0-4a95-bb0c-8d169bda9adc
       - name: Regar
         id: eb41dc1a-b955-465f-83af-50ab462cfa36
-        position: {x: 87, y: -653}
+        position: {x: 43, y: -702}
         node:
           rid: 2592758923749228557
         references:
@@ -649,7 +660,7 @@ MonoBehaviour:
         - 7b1a8eea-ed48-4e24-835d-9c8011e2d2e1
       - name: IrAReplantar
         id: ace4ae32-5e1e-475e-a9a0-2bcb6e52778b
-        position: {x: 982, y: -681}
+        position: {x: 998, y: -648}
         node:
           rid: 2592758923749228559
         references:
@@ -664,7 +675,7 @@ MonoBehaviour:
         - 853d7ceb-37e1-43c5-a22e-0b9132ff0cc2
       - name: Replantar
         id: cebd7a1d-9d7c-4a85-ae66-89dcf066c401
-        position: {x: 1253, y: -319}
+        position: {x: 1297, y: -454}
         node:
           rid: 2592758923749228561
         references:
@@ -679,7 +690,7 @@ MonoBehaviour:
         - e34b0e08-04e5-433a-8be8-ca851ad567c5
       - name: SinAgua
         id: 596fe268-49ee-49f4-a69a-dc8d50d8d66d
-        position: {x: 649, y: -263}
+        position: {x: 706, y: -211}
         node:
           rid: 2592758923749228564
         references:
@@ -699,7 +710,7 @@ MonoBehaviour:
         - 4f23fcd1-807c-4dc4-97c7-56695e3a181a
       - name: HayFlorLista
         id: f4f95164-9c7c-4409-9791-584bc9ba2e37
-        position: {x: 317, y: 31}
+        position: {x: 551, y: 68}
         node:
           rid: 2592758923749228567
         references:
@@ -739,7 +750,7 @@ MonoBehaviour:
         - df258e34-baf0-436d-8871-53acd69f3c45
       - name: HayMacetaVacia
         id: 47566c96-0ee6-4531-a7ce-365d6ce7a56e
-        position: {x: 705, y: -535}
+        position: {x: 706, y: -665}
         node:
           rid: 2592758923749228571
         references:
@@ -757,29 +768,9 @@ MonoBehaviour:
         - cd597efa-85ed-40a3-bb6d-f33993e783d9
         childIds:
         - ace4ae32-5e1e-475e-a9a0-2bcb6e52778b
-      - name: NingunaCondicionCumplida?
-        id: c69d3221-adec-44cc-91f2-2bf5c6806144
-        position: {x: -23, y: -44}
-        node:
-          rid: 2592758923749228573
-        references:
-        - fieldName: Perception
-          value:
-            rid: -2
-          fieldType: BehaviourAPI.Core.Perceptions.Perception, BehaviourAPI.Core,
-            Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
-        - fieldName: Action
-          value:
-            rid: -2
-          fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
-            Culture=neutral, PublicKeyToken=null
-        parentIds:
-        - cd597efa-85ed-40a3-bb6d-f33993e783d9
-        childIds:
-        - 905d4239-46ad-4d08-a2a7-6ee597b390fc
       - name: EnDestino_Grifo
         id: 7380ea0e-5067-4a1a-b45a-eb28d032c349
-        position: {x: 982, y: 8}
+        position: {x: 1297, y: -164}
         node:
           rid: 2592758923749228574
         references:
@@ -799,7 +790,7 @@ MonoBehaviour:
         - 3e053fb3-a844-4696-b66d-f5844fb484ad
       - name: AccionTerminada_Grifo
         id: 6235486c-e116-4cd6-864d-f3f299692f40
-        position: {x: 593, y: 127}
+        position: {x: 985, y: 35}
         node:
           rid: 2592758923749228576
         references:
@@ -816,10 +807,10 @@ MonoBehaviour:
         parentIds:
         - 3e053fb3-a844-4696-b66d-f5844fb484ad
         childIds:
-        - cd597efa-85ed-40a3-bb6d-f33993e783d9
+        - 905d4239-46ad-4d08-a2a7-6ee597b390fc
       - name: EnDestino_Maceta
         id: 6623fd55-e493-4999-b6c5-e2f8053162e1
-        position: {x: 498, y: 433}
+        position: {x: 540, y: 439}
         node:
           rid: 2592758923749228578
         references:
@@ -839,7 +830,7 @@ MonoBehaviour:
         - 8cdff674-9554-4a4a-8c12-0fd09d65b9a2
       - name: AccionTerminada_Flor
         id: 76396964-87bc-47a1-9a24-c26c4f8165b2
-        position: {x: 222, y: 512}
+        position: {x: 238, y: 648}
         node:
           rid: 2592758923749228580
         references:
@@ -879,7 +870,7 @@ MonoBehaviour:
         - 3e7703a4-e78f-44b7-bfac-be4fc2034f27
       - name: AccionTerminada_FlorDepositada
         id: d82c391d-7d71-416c-89ed-22303cae3041
-        position: {x: 42, y: 198}
+        position: {x: -138, y: 104}
         node:
           rid: 2592758923749228584
         references:
@@ -896,7 +887,7 @@ MonoBehaviour:
         parentIds:
         - 3e7703a4-e78f-44b7-bfac-be4fc2034f27
         childIds:
-        - cd597efa-85ed-40a3-bb6d-f33993e783d9
+        - 905d4239-46ad-4d08-a2a7-6ee597b390fc
       - name: EnDestino_MacetaSeca
         id: 24029301-0ea0-4a95-bb0c-8d169bda9adc
         position: {x: 378, y: -873}
@@ -919,7 +910,7 @@ MonoBehaviour:
         - eb41dc1a-b955-465f-83af-50ab462cfa36
       - name: AccionTerminada_Regar
         id: 7b1a8eea-ed48-4e24-835d-9c8011e2d2e1
-        position: {x: 63, y: -448}
+        position: {x: -195, y: -543}
         node:
           rid: 2592758923749228588
         references:
@@ -936,10 +927,10 @@ MonoBehaviour:
         parentIds:
         - eb41dc1a-b955-465f-83af-50ab462cfa36
         childIds:
-        - cd597efa-85ed-40a3-bb6d-f33993e783d9
+        - 905d4239-46ad-4d08-a2a7-6ee597b390fc
       - name: EnDestino_MacetaVacia
         id: 853d7ceb-37e1-43c5-a22e-0b9132ff0cc2
-        position: {x: 1259, y: -563}
+        position: {x: 1289, y: -657}
         node:
           rid: 2592758923749228590
         references:
@@ -959,7 +950,7 @@ MonoBehaviour:
         - cebd7a1d-9d7c-4a85-ae66-89dcf066c401
       - name: AccionTerminada_Replantar
         id: e34b0e08-04e5-433a-8be8-ca851ad567c5
-        position: {x: 952, y: -369}
+        position: {x: 998, y: -454}
         node:
           rid: 2592758923749228592
         references:
@@ -976,9 +967,12 @@ MonoBehaviour:
         parentIds:
         - cebd7a1d-9d7c-4a85-ae66-89dcf066c401
         childIds:
-        - cd597efa-85ed-40a3-bb6d-f33993e783d9
+        - 905d4239-46ad-4d08-a2a7-6ee597b390fc
     pushPerceptions:
-    - name: Atencion
+    - name: atencion
+      targetNodeIds:
+      - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
+    - name: reiniciar
       targetNodeIds:
       - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
   references:
@@ -1005,6 +999,21 @@ MonoBehaviour:
     - rid: 891130425675612245
       type: {class: State, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
       data: 
+    - rid: 891130544744300631
+      type: {class: State, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
+      data: 
+    - rid: 891130544744300632
+      type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
+      data:
+        method:
+          componentName: Jardinero
+          methodName: LimpiarObjetivo
+    - rid: 891130544744300636
+      type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
+      data:
+        method:
+          componentName: Jardinero
+          methodName: Nada
     - rid: 2592758923749228545
       type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
       data:
@@ -1034,7 +1043,7 @@ MonoBehaviour:
       data:
         method:
           componentName: Jardinero
-          methodName: Recager
+          methodName: Recoger
     - rid: 2592758923749228551
       type: {class: State, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
       data: 
@@ -1177,10 +1186,6 @@ MonoBehaviour:
         unpause:
           componentName: 
           methodName: 
-    - rid: 2592758923749228573
-      type: {class: StateTransition, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
-      data:
-        StatusFlags: -1
     - rid: 2592758923749228574
       type: {class: StateTransition, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
       data:
@@ -1771,6 +1776,7 @@ GameObject:
   - component: {fileID: 807979989}
   - component: {fileID: 807979988}
   - component: {fileID: 807979990}
+  - component: {fileID: 807979991}
   m_Layer: 0
   m_Name: Encimera
   m_TagString: Untagged
@@ -1872,6 +1878,52 @@ MonoBehaviour:
   - {fileID: 90817185}
   - {fileID: 806193991}
   escalaAlDepositar: {x: 1, y: 1, z: 1}
+--- !u!61 &807979991
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807979987}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &836022186
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,13 +2372,14 @@ GameObject:
   - component: {fileID: 1464275001}
   - component: {fileID: 1464275000}
   - component: {fileID: 1464275002}
+  - component: {fileID: 1464275003}
   m_Layer: 0
   m_Name: Regadera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1464275000
 SpriteRenderer:
   serializedVersion: 2
@@ -2415,6 +2468,52 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Regadera
   capacidadMaxima: 3
   usosIniciales: 3
+--- !u!61 &1464275003
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1464274999}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 6.86, y: 5.06}
+    newSize: {x: 6.86, y: 5.06}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 6.86, y: 5.06}
+  m_EdgeRadius: 0
 --- !u!1 &2012727419
 GameObject:
   m_ObjectHideFlags: 0

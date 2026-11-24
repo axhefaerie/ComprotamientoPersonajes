@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
 public class Jardinero : MonoBehaviour
@@ -13,12 +13,17 @@ public class Jardinero : MonoBehaviour
     [SerializeField] private float velocidadGiro = 180f;
     [SerializeField] private float distanciaLlegada = 0.15f;
 
-    // Duración que le lleva hacer las distintas acciones (por simplificar se va a usar solo 1 tiempo común aunruqe podrían usarse varios distintos)
+    // DuraciÃ³n que le lleva hacer las distintas acciones (por simplificar se va a usar solo 1 tiempo comÃºn aunruqe podrÃ­an usarse varios distintos)
     [SerializeField] private float duracionAccion = 1f;
 
     // Estado del ciclo actual (se escriben y leen dentro del script)
     private PercepcionJardinero percepcion;
     private Maceta macetaObjetivo;
+
+    private Maceta macetaParaRegar;
+    private Maceta macetaParaReplantar;
+    private Maceta macetaParaRecoger;
+
     private Transform puntoObjetivo;
     private GameObject florEnMano;
     private readonly List<Maceta> macetasPendientes = new List<Maceta>();
@@ -32,42 +37,62 @@ public class Jardinero : MonoBehaviour
     private void Awake()
     {
         percepcion = GetComponent<PercepcionJardinero>();
+        Debug.Log($"Jardinero Awake Â· percepcion = {(percepcion != null ? "OK" : "NULL")}");
+    }
+
+    private void Start()
+    {
+        var m = percepcion.BuscarMaceta(x => true);
+        Debug.Log($"Maceta mÃ¡s cercana: {(m != null ? m.name : "NINGUNA")}");
+        var g = percepcion.BuscarZona(TipoZona.Grifo);
+        Debug.Log($"Grifo: {(g != null ? g.name : "NINGUNO")}");
+    }
+
+    private void Update()
+    {
+        if (puntoObjetivo != null && !ocupado)
+            Avanzar();
     }
 
     // PERCEPCIONES
-    // Busca la maceta más cercana que tenga semilla (esté creciendo algo) y le falte riego
+    // Busca la maceta mÃ¡s cercana que tenga semilla (estÃ© creciendo algo) y le falte riego
     public bool HayMacetaSeca()
     {
-        if (ocupado) return false;      // Si tiene una flor en la mano, no puede hacer otra acción
-        macetaObjetivo = percepcion.BuscarMaceta(m => m.NecesitaAgua);
-        // Devuelve true para disparar el estado de ir a regar (solo si también hay agua en la regadera)
-        return macetaObjetivo != null && regadera.TieneAgua;       
+        if (ocupado) return false;      // Si tiene una flor en la mano, no puede hacer otra acciÃ³n
+        macetaParaRegar = percepcion.BuscarMaceta(m => m.NecesitaAgua);
+        Debug.Log($"HayMacetaVacia â†’ {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
+        // Devuelve true para disparar el estado de ir a regar (solo si tambiÃ©n hay agua en la regadera)
+        return macetaParaRegar != null && regadera.TieneAgua;       
     }
 
-    // Busca la maceta más cercana vacía para replantar
+    // Busca la maceta mÃ¡s cercana vacÃ­a para replantar
     public bool HayMacetaVacia()
     {
         if (ocupado) return false;
-        macetaObjetivo = percepcion.BuscarMaceta(m => m.EstaVacia);     // La maceta tiene que estar vacía
+        macetaParaReplantar = percepcion.BuscarMaceta(m => m.EstaVacia);     // La maceta tiene que estar vacÃ­a
+        Debug.Log($"HayMacetaVacia â†’ {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
         // Devuelve true para ir a plantar
-        return macetaObjetivo != null && !LlevaFlor;        
+        return macetaParaReplantar != null && !LlevaFlor;        
     }
 
-    // Busca la maceta más cercana con la flor lista (para recoger)
+    // Busca la maceta mÃ¡s cercana con la flor lista (para recoger)
     public bool HayFlorLista()
     {
-        if (ocupado) return false;      
-        macetaObjetivo = percepcion.BuscarMaceta(m => m.TieneFlorLista);
-        // Devuelve true para ir a recoger la flor (comprueba que no lleve flor para evitar que se recojan 2 veces o pase algo extraño)
-        return macetaObjetivo != null && !LlevaFlor;
+        if (ocupado) return false;
+        macetaParaRecoger = percepcion.BuscarMaceta(m => m.TieneFlorLista);
+        Debug.Log($"HayMacetaVacia â†’ {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
+        // Devuelve true para ir a recoger la flor (comprueba que no lleve flor para evitar que se recojan 2 veces o pase algo extraÃ±o)
+        return macetaParaRecoger != null && !LlevaFlor;
     }
 
-    // Comprueba que la regadera está vacía para ir a recargar
+    // Comprueba que la regadera estÃ¡ vacÃ­a para ir a recargar
     public bool SinAgua()
     {
         if (ocupado) return false;
         // Si la regadera no tiene agua y hay zona de recarga, se va a rellenar
-        return !regadera.TieneAgua && percepcion.BuscarZona(TipoZona.Grifo) != null;
+        bool resultado = !regadera.TieneAgua && percepcion.BuscarZona(TipoZona.Grifo) != null;
+        Debug.Log($"SinAgua â†’ {resultado}");
+        return resultado;
     }
 
     // Comprueba si se puede depositar la flor
@@ -86,7 +111,7 @@ public class Jardinero : MonoBehaviour
         return Vector2.Distance(posActual, posDestino) < distanciaLlegada;
     }
 
-    // Devuelve true cuando se ha terminado una acción
+    // Devuelve true cuando se ha terminado una acciÃ³n
     public bool AccionTerminada()
     {
         if (!ocupado) return true;
@@ -102,8 +127,8 @@ public class Jardinero : MonoBehaviour
     // ACCIONES    
     public void IrARegar()
     {
-        if (macetaObjetivo == null) return;
-        puntoObjetivo = macetaObjetivo.GetComponent<ZonaInteraccion>().PuntoUso;
+        if (macetaParaRegar == null) return;
+        puntoObjetivo = macetaParaRegar.GetComponent<ZonaInteraccion>().PuntoUso;
         Avanzar();
     }
 
@@ -111,8 +136,8 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
-        if (macetaObjetivo != null && regadera.GastarUna())
-            macetaObjetivo.Regar();
+        if (macetaParaRegar != null && regadera.GastarUna())
+            macetaParaRegar.Regar();
 
         IniciarAccion(duracionAccion);
     }
@@ -135,8 +160,8 @@ public class Jardinero : MonoBehaviour
 
     public void IrARecoger()
     {
-        if (macetaObjetivo == null) return;
-        puntoObjetivo = macetaObjetivo.GetComponent<ZonaInteraccion>().PuntoUso;
+        if (macetaParaRecoger == null) return;
+        puntoObjetivo = macetaParaRecoger.GetComponent<ZonaInteraccion>().PuntoUso;
         Avanzar();
     }
 
@@ -144,9 +169,9 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
-        if (macetaObjetivo == null) return;
-        macetaObjetivo.RecogerFlor();
-        florEnMano = macetaObjetivo.SacarFlorVisual(puntoMano);
+        if (macetaParaRecoger == null) return;
+        macetaParaRecoger.RecogerFlor();
+        florEnMano = macetaParaRecoger.SacarFlorVisual(puntoMano);
         IniciarAccion(duracionAccion);
     }
 
@@ -171,8 +196,8 @@ public class Jardinero : MonoBehaviour
 
     public void IrAReplantar()
     {
-        if (macetaObjetivo == null) return;
-        puntoObjetivo = macetaObjetivo.GetComponent<ZonaInteraccion>().PuntoUso;
+        if (macetaParaReplantar == null) return;
+        puntoObjetivo = macetaParaReplantar.GetComponent<ZonaInteraccion>().PuntoUso;
         Avanzar();
     }
 
@@ -180,17 +205,20 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
-        macetaObjetivo?.PlantarSemilla();
+        macetaParaReplantar?.PlantarSemilla();
         IniciarAccion(duracionAccion);
     }
 
     public void LimpiarObjetivo()
     {
+        Debug.Log("Â¡El grafo estÃ¡ en Prueba!");
         macetaObjetivo = null;
         puntoObjetivo = null;
     }
 
-    // ================== INTERNO ==================
+    public void Nada() { Debug.Log("estoy en Buscar"); }
+
+    // INTERNO
     private void IniciarAccion(float duracion)
     {
         ocupado = true;
@@ -208,7 +236,7 @@ public class Jardinero : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, destino, velocidad * Time.deltaTime);
 
-            // Si giráis el transform en Z (asumiendo que "arriba" / transform.up es el frente del sprite):
+            // Si girÃ¡is el transform en Z (asumiendo que "arriba" / transform.up es el frente del sprite):
             float angulo = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
             Quaternion rotacionDeseada = Quaternion.Euler(0f, 0f, angulo);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotacionDeseada, velocidadGiro * Time.deltaTime);
