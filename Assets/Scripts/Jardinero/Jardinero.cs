@@ -37,7 +37,18 @@ public class Jardinero : MonoBehaviour
     private void Awake()
     {
         percepcion = GetComponent<PercepcionJardinero>();
-        Debug.Log($"Jardinero Awake · percepcion = {(percepcion != null ? "OK" : "NULL")}");
+
+        if (percepcion == null)
+            Debug.LogError("Falta PercepcionJardinero", this);
+
+        if (regadera == null)
+            Debug.LogError("Falta asignar Regadera", this);
+
+        if (encimera == null)
+            Debug.LogError("Falta asignar Encimera", this);
+
+        if (puntoMano == null)
+            Debug.LogError("Falta asignar PuntoMano", this);
     }
 
     private void Start()
@@ -50,19 +61,48 @@ public class Jardinero : MonoBehaviour
 
     private void Update()
     {
-        if (puntoObjetivo != null && !ocupado)
+        // Si está realizando una acción, actualizar su temporizador
+        if (ocupado)
+        {
+            temporizador -= Time.deltaTime;
+
+            // Comprobar si ha terminado la acción
+            if (temporizador <= 0f)
+            {
+                temporizador = 0f;
+                ocupado = false;
+                Debug.Log("Acción terminada");
+            }
+
+            return;
+        }
+
+        // Si no está ocupado, puede desplazarse
+        if (puntoObjetivo != null)
+        {
             Avanzar();
+        }
     }
 
     // PERCEPCIONES
     // Busca la maceta más cercana que tenga semilla (esté creciendo algo) y le falte riego
     public bool HayMacetaSeca()
     {
-        if (ocupado) return false;      // Si tiene una flor en la mano, no puede hacer otra acción
-        macetaParaRegar = percepcion.BuscarMaceta(m => m.NecesitaAgua);
-        Debug.Log($"HayMacetaVacia → {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
-        // Devuelve true para disparar el estado de ir a regar (solo si también hay agua en la regadera)
-        return macetaParaRegar != null && regadera.TieneAgua;       
+        if (ocupado) return false;
+
+        // Buscar la maceta más cercana que necesite agua
+        macetaParaRegar = percepcion.BuscarMaceta(
+            m => m.NecesitaAgua
+        );
+
+        // Comprobar que existe una maceta y que hay agua
+        bool resultado = macetaParaRegar != null && regadera.TieneAgua;
+
+        Debug.Log(
+            $"HayMacetaSeca → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")} | Resultado: {resultado}"
+        );
+
+        return resultado;
     }
 
     // Busca la maceta más cercana vacía para replantar
@@ -70,7 +110,7 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return false;
         macetaParaReplantar = percepcion.BuscarMaceta(m => m.EstaVacia);     // La maceta tiene que estar vacía
-        Debug.Log($"HayMacetaVacia → {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
+        Debug.Log($"HayMacetaVacia → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")}");
         // Devuelve true para ir a plantar
         return macetaParaReplantar != null && !LlevaFlor;        
     }
@@ -80,7 +120,7 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return false;
         macetaParaRecoger = percepcion.BuscarMaceta(m => m.TieneFlorLista);
-        Debug.Log($"HayMacetaVacia → {(macetaObjetivo != null ? macetaObjetivo.name : "ninguna")}");
+        Debug.Log($"HayMacetaVacia → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")}");
         // Devuelve true para ir a recoger la flor (comprueba que no lleve flor para evitar que se recojan 2 veces o pase algo extraño)
         return macetaParaRecoger != null && !LlevaFlor;
     }
@@ -105,30 +145,51 @@ public class Jardinero : MonoBehaviour
     // Comprueba que se ha llegado al destino
     public bool EnDestino()
     {
-        if (puntoObjetivo == null) return true;     // Si no hay punto objetivo, ddevuelve true
+        // Si no hay destino, no podemos considerar que haya llegado
+        if (puntoObjetivo == null)
+            return false;
+
         Vector2 posActual = transform.position;
         Vector2 posDestino = puntoObjetivo.position;
-        return Vector2.Distance(posActual, posDestino) < distanciaLlegada;
+
+        float distancia = Vector2.Distance(posActual, posDestino);
+
+        return distancia <= distanciaLlegada;
     }
 
     // Devuelve true cuando se ha terminado una acción
     public bool AccionTerminada()
     {
-        if (!ocupado) return true;
-        temporizador -= Time.deltaTime;
-        if (temporizador <= 0f)
-        {
-            ocupado = false;
-            return true;
-        }
-        return false;
+        return !ocupado;
     }
 
     // ACCIONES    
     public void IrARegar()
     {
+        if (ocupado) return;
+
+        // Comprobar que existe una maceta objetivo
         if (macetaParaRegar == null) return;
-        puntoObjetivo = macetaParaRegar.GetComponent<ZonaInteraccion>().PuntoUso;
+
+        // Comprobar que sigue necesitando agua
+        if (!macetaParaRegar.NecesitaAgua)
+        {
+            macetaParaRegar = null;
+            puntoObjetivo = null;
+            return;
+        }
+
+        // Comprobar que la regadera tiene agua
+        if (!regadera.TieneAgua)
+        {
+            macetaParaRegar = null;
+            puntoObjetivo = null;
+            return;
+        }
+
+        puntoObjetivo = macetaParaRegar
+            .GetComponent<ZonaInteraccion>().PuntoUso;
+
         Avanzar();
     }
 
@@ -136,10 +197,37 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
-        if (macetaParaRegar != null && regadera.GastarUna())
+        // Comprobar que existe una maceta
+        if (macetaParaRegar == null) return;
+
+        // Comprobar que el jardinero ha llegado
+        if (!EnDestino()) return;
+
+        // Comprobar que la maceta sigue necesitando agua
+        if (!macetaParaRegar.NecesitaAgua)
+        {
+            macetaParaRegar = null;
+            puntoObjetivo = null;
+            Debug.Log("La maceta ya no necesita agua");
+            return;
+        }
+
+        // Comprobar que queda agua
+        if (!regadera.TieneAgua)
+        {
+            Debug.Log("La regadera está vacía");
+            return;
+        }
+
+        // Gastar agua y regar
+        if (regadera.GastarUna())
+        {
             macetaParaRegar.Regar();
 
-        IniciarAccion(duracionAccion);
+            IniciarAccion(duracionAccion);
+
+            Debug.Log("Maceta regada correctamente");
+        }
     }
 
     public void IrARecargar()
@@ -152,6 +240,7 @@ public class Jardinero : MonoBehaviour
     public void Recargar()
     {
         if (ocupado) return;
+        if (regadera.TieneAgua) return;
 
         regadera.Recargar();
 
@@ -168,10 +257,13 @@ public class Jardinero : MonoBehaviour
     public void Recoger()
     {
         if (ocupado) return;
-
         if (macetaParaRecoger == null) return;
+        if (!macetaParaRecoger.TieneFlorLista) return;
+
         macetaParaRecoger.RecogerFlor();
+
         florEnMano = macetaParaRecoger.SacarFlorVisual(puntoMano);
+
         IniciarAccion(duracionAccion);
     }
 
@@ -184,10 +276,13 @@ public class Jardinero : MonoBehaviour
     public void Depositar()
     {
         if (ocupado) return;
-
         if (florEnMano == null) return;
+        if (!encimera.HayHueco) return;
+
         encimera.Depositar(florEnMano);
+
         florEnMano = null;
+
         IniciarAccion(duracionAccion);
 
         puntoObjetivo = null;
@@ -204,8 +299,12 @@ public class Jardinero : MonoBehaviour
     public void Replantar()
     {
         if (ocupado) return;
+        if (macetaParaReplantar == null) return;
+        if (!macetaParaReplantar.EstaVacia) return;
+        if (LlevaFlor) return;
 
-        macetaParaReplantar?.PlantarSemilla();
+        macetaParaReplantar.PlantarSemilla();
+
         IniciarAccion(duracionAccion);
     }
 
@@ -221,25 +320,63 @@ public class Jardinero : MonoBehaviour
     // INTERNO
     private void IniciarAccion(float duracion)
     {
+        if (ocupado) return;
+
         ocupado = true;
-        temporizador = duracion;
+        temporizador = Mathf.Max(0f, duracion);
+
+        Debug.Log($"Acción de {temporizador} segundos");
     }
 
     private void Avanzar()
     {
-        if (puntoObjetivo == null) return;
+        // Si no hay destino, no se mueve
+        if (puntoObjetivo == null)
+            return;
 
-        Vector3 destino = new Vector3(puntoObjetivo.position.x, puntoObjetivo.position.y, transform.position.z);
+        Vector3 destino = new Vector3(
+            puntoObjetivo.position.x,
+            puntoObjetivo.position.y,
+            transform.position.z
+        );
+
+        // Comprobar si ya ha llegado
+        if (EnDestino())
+        {
+            // Ajustar la posición para que coincida exactamente
+            transform.position = destino;
+            return;
+        }
+
         Vector3 dir = destino - transform.position;
 
         if (dir.sqrMagnitude > 0.0001f)
         {
-            transform.position = Vector3.MoveTowards(transform.position, destino, velocidad * Time.deltaTime);
+            // Movimiento hacia el destino
+            transform.position = Vector3.MoveTowards(
+                transform.position,
+                destino,
+                velocidad * Time.deltaTime
+            );
 
-            // Si giráis el transform en Z (asumiendo que "arriba" / transform.up es el frente del sprite):
+            // Girar hacia la dirección del movimiento
             float angulo = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-            Quaternion rotacionDeseada = Quaternion.Euler(0f, 0f, angulo);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotacionDeseada, velocidadGiro * Time.deltaTime);
+
+            Quaternion rotacionDeseada = Quaternion.Euler(
+                0f, 0f, angulo
+            );
+
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                rotacionDeseada,
+                velocidadGiro * Time.deltaTime
+            );
+        }
+
+        // Comprobar nuevamente si ha llegado después de moverse
+        if (EnDestino())
+        {
+            transform.position = destino;
         }
 
         /*
