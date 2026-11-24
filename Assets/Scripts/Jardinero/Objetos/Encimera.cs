@@ -10,6 +10,7 @@ public class Encimera : MonoBehaviour
 
     public bool HayHueco => flores.Count < huecos.Length;       // Devuelve true si noestá lleno huecos
 
+
     public void Depositar(GameObject flor)
     {
         if (flor == null || !HayHueco) return;
@@ -18,7 +19,13 @@ public class Encimera : MonoBehaviour
         flor.transform.SetParent(hueco, false);
         flor.transform.localPosition = Vector3.zero;
         flor.transform.localRotation = Quaternion.identity;
-        flor.transform.localScale = escalaAlDepositar;
+        flor.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
+
+        // flor por delante de la encimera
+        SpriteRenderer spriteFlor = flor.GetComponentInChildren<SpriteRenderer>();
+
+        if (spriteFlor != null)
+            spriteFlor.sortingOrder = 1;
 
         flores.Add(flor);
     }
