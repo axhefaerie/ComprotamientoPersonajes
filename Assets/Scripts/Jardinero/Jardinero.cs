@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Jardinero : MonoBehaviour
 {
@@ -82,7 +81,9 @@ public class Jardinero : MonoBehaviour
     public bool EnDestino()
     {
         if (puntoObjetivo == null) return true;     // Si no hay punto objetivo, ddevuelve true
-        return Vector3.Distance(transform.position, puntoObjetivo.position) < distanciaLlegada;
+        Vector2 posActual = transform.position;
+        Vector2 posDestino = puntoObjetivo.position;
+        return Vector2.Distance(posActual, posDestino) < distanciaLlegada;
     }
 
     // Devuelve true cuando se ha terminado una acción
@@ -108,6 +109,8 @@ public class Jardinero : MonoBehaviour
 
     public void Regar()
     {
+        if (ocupado) return;
+
         if (macetaObjetivo != null && regadera.GastarUna())
             macetaObjetivo.Regar();
 
@@ -123,7 +126,10 @@ public class Jardinero : MonoBehaviour
 
     public void Recargar()
     {
+        if (ocupado) return;
+
         regadera.Recargar();
+
         IniciarAccion(duracionAccion);
     }
 
@@ -136,6 +142,8 @@ public class Jardinero : MonoBehaviour
 
     public void Recoger()
     {
+        if (ocupado) return;
+
         if (macetaObjetivo == null) return;
         macetaObjetivo.RecogerFlor();
         florEnMano = macetaObjetivo.SacarFlorVisual(puntoMano);
@@ -150,10 +158,15 @@ public class Jardinero : MonoBehaviour
 
     public void Depositar()
     {
+        if (ocupado) return;
+
         if (florEnMano == null) return;
         encimera.Depositar(florEnMano);
         florEnMano = null;
         IniciarAccion(duracionAccion);
+
+        puntoObjetivo = null;
+        macetaObjetivo = null;
     }
 
     public void IrAReplantar()
@@ -165,6 +178,8 @@ public class Jardinero : MonoBehaviour
 
     public void Replantar()
     {
+        if (ocupado) return;
+
         macetaObjetivo?.PlantarSemilla();
         IniciarAccion(duracionAccion);
     }
@@ -186,6 +201,20 @@ public class Jardinero : MonoBehaviour
     {
         if (puntoObjetivo == null) return;
 
+        Vector3 destino = new Vector3(puntoObjetivo.position.x, puntoObjetivo.position.y, transform.position.z);
+        Vector3 dir = destino - transform.position;
+
+        if (dir.sqrMagnitude > 0.0001f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, destino, velocidad * Time.deltaTime);
+
+            // Si giráis el transform en Z (asumiendo que "arriba" / transform.up es el frente del sprite):
+            float angulo = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+            Quaternion rotacionDeseada = Quaternion.Euler(0f, 0f, angulo);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotacionDeseada, velocidadGiro * Time.deltaTime);
+        }
+
+        /*
         Vector3 destino = puntoObjetivo.position;
         destino.y = transform.position.y;
 
@@ -197,7 +226,7 @@ public class Jardinero : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(
                 transform.rotation, Quaternion.LookRotation(dir),
                 velocidadGiro * Time.deltaTime);
-
+        */
     }
 
     public void RegistrarMacetaPendiente(Maceta maceta)

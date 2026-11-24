@@ -1,6 +1,8 @@
 using UnityEngine;
 using System;
 
+// Para saber que tiene q hacer
+
 public class PercepcionJardinero : MonoBehaviour
 {
     [SerializeField] private float radio = 10f;     // Radio de alcance

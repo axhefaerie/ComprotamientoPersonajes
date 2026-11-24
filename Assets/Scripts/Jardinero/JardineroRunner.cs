@@ -4,7 +4,6 @@ using BehaviourAPI.UnityToolkit;
 using BehaviourAPI.UnityToolkit.GUIDesigner.Runtime;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine;
 
 namespace BehaviourAPI.UnityToolkit.Demos
 {
