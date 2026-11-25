@@ -19,7 +19,7 @@ public class Encimera : MonoBehaviour
         flor.transform.SetParent(hueco, false);
         flor.transform.localPosition = Vector3.zero;
         flor.transform.localRotation = Quaternion.identity;
-        flor.transform.localScale = new Vector3(0.1f, 0.1f, 1f);
+        flor.transform.localScale = escalaAlDepositar;
 
         // flor por delante de la encimera
         SpriteRenderer spriteFlor = flor.GetComponentInChildren<SpriteRenderer>();

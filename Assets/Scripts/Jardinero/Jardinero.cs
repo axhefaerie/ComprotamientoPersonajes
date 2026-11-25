@@ -7,6 +7,7 @@ public class Jardinero : MonoBehaviour
     [SerializeField] private Regadera regadera;
     [SerializeField] private Encimera encimera;
     [SerializeField] private Transform puntoMano;
+    [SerializeField] private Vector3 escalaFlorEnMano = Vector3.one;
 
     // Movimiento del Jardinero
     [SerializeField] private float velocidad = 2f;
@@ -32,6 +33,7 @@ public class Jardinero : MonoBehaviour
     // Temporizador para acciones que duran un rato (para que no se solapen o no entre en bucles raros)
     private float temporizador;
     private bool ocupado;
+    private bool ocultarRegadera;
 
     public bool LlevaFlor => florEnMano != null;
 
@@ -54,6 +56,8 @@ public class Jardinero : MonoBehaviour
 
         if (puntoMano == null)
             Debug.LogError("Falta asignar PuntoMano", this);
+
+        ActualizarVisibilidadRegadera();
     }
 
     private void Start()
@@ -76,6 +80,11 @@ public class Jardinero : MonoBehaviour
             {
                 temporizador = 0f;
                 ocupado = false;
+
+                if (!LlevaFlor)
+                    ocultarRegadera = false;
+
+                ActualizarVisibilidadRegadera();
                 Debug.Log("Acción terminada");
             }
 
@@ -89,23 +98,19 @@ public class Jardinero : MonoBehaviour
         }
     }
 
-    // PERCEPCIONES
+    // ================== PERCEPCIONES ==================
     // Busca la maceta más cercana que tenga semilla (esté creciendo algo) y le falte riego
     public bool HayMacetaSeca()
     {
         if (ocupado) return false;
 
         // Buscar la maceta más cercana que necesite agua
-        macetaParaRegar = percepcion.BuscarMaceta(
-            m => m.NecesitaAgua
-        );
+        macetaParaRegar = percepcion.BuscarMaceta(m => m.NecesitaAgua);
 
         // Comprobar que existe una maceta y que hay agua
         bool resultado = macetaParaRegar != null && regadera.TieneAgua;
 
-        Debug.Log(
-            $"HayMacetaSeca → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")} | Resultado: {resultado}"
-        );
+        Debug.Log($"HayMacetaSeca → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")} | Resultado: {resultado}");
 
         return resultado;
     }
@@ -114,29 +119,37 @@ public class Jardinero : MonoBehaviour
     public bool HayMacetaVacia()
     {
         if (ocupado) return false;
+
         macetaParaReplantar = percepcion.BuscarMaceta(m => m.EstaVacia);     // La maceta tiene que estar vacía
+        bool resultado = macetaParaReplantar != null && !LlevaFlor;
+
         Debug.Log($"HayMacetaVacia → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")}");
         // Devuelve true para ir a plantar
-        return macetaParaReplantar != null && !LlevaFlor;        
+        return resultado;        
     }
 
     // Busca la maceta más cercana con la flor lista (para recoger)
     public bool HayFlorLista()
     {
         if (ocupado) return false;
+
         macetaParaRecoger = percepcion.BuscarMaceta(m => m.TieneFlorLista);
+        bool resultado = macetaParaRecoger != null && !LlevaFlor;
+
         Debug.Log($"HayMacetaVacia → {(macetaParaRegar != null ? macetaParaRegar.name : "ninguna")}");
         // Devuelve true para ir a recoger la flor (comprueba que no lleve flor para evitar que se recojan 2 veces o pase algo extraño)
-        return macetaParaRecoger != null && !LlevaFlor;
+        return resultado;
     }
 
     // Comprueba que la regadera está vacía para ir a recargar
     public bool SinAgua()
     {
         if (ocupado) return false;
+
         // Si la regadera no tiene agua y hay zona de recarga, se va a rellenar
         bool resultado = !regadera.TieneAgua && percepcion.BuscarZona(TipoZona.Grifo) != null;
         Debug.Log($"SinAgua → {resultado}");
+
         return resultado;
     }
 
@@ -173,6 +186,9 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
+        ocultarRegadera = false;
+        ActualizarVisibilidadRegadera();
+
         // Comprobar que existe una maceta objetivo
         if (macetaParaRegar == null) return;
 
@@ -192,8 +208,7 @@ public class Jardinero : MonoBehaviour
             return;
         }
 
-        puntoObjetivo = macetaParaRegar
-            .GetComponent<ZonaInteraccion>().PuntoUso;
+        puntoObjetivo = macetaParaRegar.GetComponent<ZonaInteraccion>().PuntoUso;
 
         Avanzar();
     }
@@ -226,19 +241,27 @@ public class Jardinero : MonoBehaviour
 
         // Gastar agua y regar
         if (regadera.GastarUna())
-        {
+        {         
             macetaParaRegar.Regar();
-
+            ocultarRegadera = false;
+            ActualizarVisibilidadRegadera();
             IniciarAccion(duracionAccion);
-
             Debug.Log("Maceta regada correctamente");
         }
     }
 
     public void IrARecargar()
     {
+        if (ocupado) return;
+
+        ocultarRegadera = false;
+        ActualizarVisibilidadRegadera();
+
         var grifo = percepcion.BuscarZona(TipoZona.Grifo);
-        if (grifo != null) puntoObjetivo = grifo.PuntoUso;
+        if (grifo != null)
+            puntoObjetivo = grifo.PuntoUso != null ? grifo.PuntoUso : grifo.transform;
+        //puntoObjetivo = grifo.PuntoUso;
+
         Avanzar();
     }
 
@@ -247,15 +270,23 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
         if (regadera.TieneAgua) return;
 
-        regadera.Recargar();
+        ocultarRegadera = false;
+        ActualizarVisibilidadRegadera();
 
+        regadera.Recargar();
         IniciarAccion(duracionAccion);
     }
 
     public void IrARecoger()
     {
+        if (ocupado) return;
+
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
+
         if (macetaParaRecoger == null) return;
         puntoObjetivo = macetaParaRecoger.GetComponent<ZonaInteraccion>().PuntoUso;
+        
         Avanzar();
     }
 
@@ -265,16 +296,28 @@ public class Jardinero : MonoBehaviour
         if (macetaParaRecoger == null) return;
         if (!macetaParaRecoger.TieneFlorLista) return;
 
-        macetaParaRecoger.RecogerFlor();
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
 
+        macetaParaRecoger.RecogerFlor();
         florEnMano = macetaParaRecoger.SacarFlorVisual(puntoMano);
+
+        if (florEnMano != null) // Ajustar escala
+            florEnMano.transform.localScale = escalaFlorEnMano;
 
         IniciarAccion(duracionAccion);
     }
 
     public void IrAEncimera()
     {
-        puntoObjetivo = encimera.transform;
+        if (ocupado) return;
+
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
+
+        if (encimera != null)
+            puntoObjetivo = encimera.transform;
+
         Avanzar();
     }
 
@@ -284,18 +327,24 @@ public class Jardinero : MonoBehaviour
         if (florEnMano == null) return;
         if (!encimera.HayHueco) return;
 
-        encimera.Depositar(florEnMano);
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
 
+        encimera.Depositar(florEnMano);
         florEnMano = null;
 
         IniciarAccion(duracionAccion);
-
         puntoObjetivo = null;
         macetaObjetivo = null;
     }
 
     public void IrAReplantar()
     {
+        if (ocupado) return;
+
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
+
         if (macetaParaReplantar == null) return;
         puntoObjetivo = macetaParaReplantar.GetComponent<ZonaInteraccion>().PuntoUso;
         Avanzar();
@@ -308,8 +357,10 @@ public class Jardinero : MonoBehaviour
         if (!macetaParaReplantar.EstaVacia) return;
         if (LlevaFlor) return;
 
-        macetaParaReplantar.PlantarSemilla();
+        ocultarRegadera = true;
+        ActualizarVisibilidadRegadera();
 
+        macetaParaReplantar.PlantarSemilla();
         IniciarAccion(duracionAccion);
     }
 
@@ -322,7 +373,7 @@ public class Jardinero : MonoBehaviour
 
     public void Nada() { Debug.Log("estoy en Buscar"); }
 
-    // INTERNO
+    // ================== INTERNO ==================
     private void IniciarAccion(float duracion)
     {
         if (ocupado) return;
@@ -372,20 +423,6 @@ public class Jardinero : MonoBehaviour
         {
             transform.position = destino;
         }
-
-        /*
-        Vector3 destino = puntoObjetivo.position;
-        destino.y = transform.position.y;
-
-        transform.position = Vector3.MoveTowards(
-            transform.position, destino, velocidad * Time.deltaTime);
-
-        Vector3 dir = destino - transform.position;
-        if (dir.sqrMagnitude > 0.001f)
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation, Quaternion.LookRotation(dir),
-                velocidadGiro * Time.deltaTime);
-        */
     }
 
     // Para flipear el sprite del jardinero
@@ -395,7 +432,11 @@ public class Jardinero : MonoBehaviour
             return;
 
         bool vaIzquierda = dirX < 0f;
-        spriteRenderer.flipX = spriteMiraDerechaPorDefecto ? vaIzquierda : !vaIzquierda;
+        bool flip = spriteMiraDerechaPorDefecto ? vaIzquierda : !vaIzquierda;
+        spriteRenderer.flipX = flip;
+
+        if (regadera != null)
+            regadera.EstablecerFlipX(flip);
     }
 
     public void RegistrarMacetaPendiente(Maceta maceta)
@@ -409,4 +450,10 @@ public class Jardinero : MonoBehaviour
         macetasPendientes.Remove(maceta);
     }
 
+    private void ActualizarVisibilidadRegadera()
+    {
+        if (regadera == null) return;
+        bool visible = !ocultarRegadera && !LlevaFlor;
+        regadera.EstablecerVisible(visible);
+    }
 }
