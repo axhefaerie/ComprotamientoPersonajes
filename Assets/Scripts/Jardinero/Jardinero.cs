@@ -10,13 +10,14 @@ public class Jardinero : MonoBehaviour
 
     // Movimiento del Jardinero
     [SerializeField] private float velocidad = 2f;
-    [SerializeField] private float velocidadGiro = 180f;
+    [SerializeField] private bool spriteMiraDerechaPorDefecto = true;
     [SerializeField] private float distanciaLlegada = 0.15f;
 
     // Duración que le lleva hacer las distintas acciones (por simplificar se va a usar solo 1 tiempo común aunruqe podrían usarse varios distintos)
     [SerializeField] private float duracionAccion = 1f;
 
     // Estado del ciclo actual (se escriben y leen dentro del script)
+    private SpriteRenderer spriteRenderer;
     private PercepcionJardinero percepcion;
     private Maceta macetaObjetivo;
 
@@ -36,7 +37,11 @@ public class Jardinero : MonoBehaviour
 
     private void Awake()
     {
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         percepcion = GetComponent<PercepcionJardinero>();
+
+        if (spriteRenderer == null)
+            Debug.LogError("Falta SpriteRenderer en Jardinero o sus hijos", this);
 
         if (percepcion == null)
             Debug.LogError("Falta PercepcionJardinero", this);
@@ -352,24 +357,13 @@ public class Jardinero : MonoBehaviour
 
         if (dir.sqrMagnitude > 0.0001f)
         {
+            ActualizarFlipX(dir.x);
+
             // Movimiento hacia el destino
             transform.position = Vector3.MoveTowards(
                 transform.position,
                 destino,
                 velocidad * Time.deltaTime
-            );
-
-            // Girar hacia la dirección del movimiento
-            float angulo = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
-
-            Quaternion rotacionDeseada = Quaternion.Euler(
-                0f, 0f, angulo
-            );
-
-            transform.rotation = Quaternion.RotateTowards(
-                transform.rotation,
-                rotacionDeseada,
-                velocidadGiro * Time.deltaTime
             );
         }
 
@@ -392,6 +386,16 @@ public class Jardinero : MonoBehaviour
                 transform.rotation, Quaternion.LookRotation(dir),
                 velocidadGiro * Time.deltaTime);
         */
+    }
+
+    // Para flipear el sprite del jardinero
+    private void ActualizarFlipX(float dirX)
+    {
+        if (spriteRenderer == null || Mathf.Abs(dirX) <= 0.001f)
+            return;
+
+        bool vaIzquierda = dirX < 0f;
+        spriteRenderer.flipX = spriteMiraDerechaPorDefecto ? vaIzquierda : !vaIzquierda;
     }
 
     public void RegistrarMacetaPendiente(Maceta maceta)
