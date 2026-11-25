@@ -2191,6 +2191,10 @@ PrefabInstance:
       propertyPath: tiempoParaSecarse
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: spriteFaltaEsperar
+      value: 
+      objectReference: {fileID: 21300000, guid: 4077aba0d9b8bdb4ba32f59fa8d5eb90, type: 3}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name
       value: Maceta (1)
@@ -2276,6 +2280,10 @@ PrefabInstance:
       propertyPath: tiempoParaSecarse
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: spriteFaltaEsperar
+      value: 
+      objectReference: {fileID: 21300000, guid: 4077aba0d9b8bdb4ba32f59fa8d5eb90, type: 3}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name
       value: Maceta (2)
@@ -2427,6 +2435,10 @@ PrefabInstance:
       propertyPath: tiempoParaSecarse
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: spriteFaltaEsperar
+      value: 
+      objectReference: {fileID: 21300000, guid: 4077aba0d9b8bdb4ba32f59fa8d5eb90, type: 3}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name
       value: Maceta
