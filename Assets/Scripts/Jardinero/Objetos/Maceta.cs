@@ -8,12 +8,15 @@ public class Maceta : MonoBehaviour
     [SerializeField] private int riegosNecesarios = 3;         // Veces que necesita ser regada para crecer    
     [SerializeField] private GameObject prefabFlor;            // Prefab de la flor
     [SerializeField] private Transform puntoFlor;              // Punto de aparición de la flor
-    [SerializeField] private float tiempoParaSecarse = 15f;          // Tiempo que tarda en volver a pedir agua
+    [SerializeField] private float tiempoParaSecarse = 40f;          // Tiempo que tarda en volver a pedir agua
+    [SerializeField] private float tiempoEntreRiegos = 30f; // Tiempo de espera entre riegos
+
 
     [Header("Bocadillos de estado")]
     [SerializeField] private SpriteRenderer bocadilloRenderer;
     [SerializeField] private Sprite spriteFaltaSemilla;
     [SerializeField] private Sprite spriteFaltaAgua;
+    [SerializeField] private Sprite spriteFaltaEsperar;
 
     [Header("Destellos al florecer")]
     [SerializeField] private GameObject destellosObjeto;
@@ -25,10 +28,13 @@ public class Maceta : MonoBehaviour
      private bool creciendo;            // Devuelve si est  á creciendo
      private float cronometro;          // Cronometro
      private GameObject florInstanciada;        // Flor
+    private float tiempoUltimoRiego; // Tiempo que ha pasado desde el último riego
+
 
 
     public bool EstaVacia => !tieneFlor && !creciendo;      // Devuelve si la maceta está vacía (si no tiene ninguna flor y si no hay ninguna planta creciendo)
-    public bool NecesitaAgua => creciendo && riegosRecibidos < riegosNecesarios;        // Devuelve si necesita agua (si está creciendo y si ha recibido menos riegos de lo nececsario)
+    public bool NecesitaAgua => creciendo && riegosRecibidos < riegosNecesarios;
+    public bool PuedeRegarse => NecesitaAgua && Time.time - tiempoUltimoRiego >= tiempoEntreRiegos;// Devuelve si necesita agua (si está creciendo y si ha recibido menos riegos de lo nececsario)
     public bool TieneFlorLista => tieneFlor;    // Devuelve si tiene la flor lista para recoger
 
     private void Start()
@@ -74,6 +80,8 @@ public class Maceta : MonoBehaviour
         riegosRecibidos = 0;
         cronometro = 0f;
         sequedad = 0f;
+        tiempoUltimoRiego = -tiempoEntreRiegos;
+
 
         if (destellosObjeto != null) destellosObjeto.SetActive(false);
         ActualizarBocadillo();
@@ -84,8 +92,13 @@ public class Maceta : MonoBehaviour
     public bool Regar()
     {
         if (!NecesitaAgua) return false;
+        if (Time.time - tiempoUltimoRiego < tiempoEntreRiegos) 
+            return false;  // Evita regar demasiado rápido
+        
+        
         riegosRecibidos++;
         sequedad = 0f;
+        tiempoUltimoRiego = Time.time;
 
         ActualizarBocadillo();
         return true;
@@ -139,16 +152,25 @@ public class Maceta : MonoBehaviour
 
         if (EstaVacia && spriteFaltaSemilla != null)
         {
+            // No tiene ninguna semilla
             bocadilloRenderer.sprite = spriteFaltaSemilla;
             bocadilloRenderer.enabled = true;
         }
-        else if (NecesitaAgua && spriteFaltaAgua != null)
+        else if (PuedeRegarse && spriteFaltaAgua != null)
         {
+            // Necesita agua y ya puede recibir otro riego
             bocadilloRenderer.sprite = spriteFaltaAgua;
+            bocadilloRenderer.enabled = true;
+        }
+        else if (NecesitaAgua && !PuedeRegarse && spriteFaltaEsperar != null)
+        {
+            // Todavía está esperando para poder recibir otro riego
+            bocadilloRenderer.sprite = spriteFaltaEsperar;
             bocadilloRenderer.enabled = true;
         }
         else
         {
+            // No necesita mostrar ningún bocadillo
             bocadilloRenderer.enabled = false;
         }
     }

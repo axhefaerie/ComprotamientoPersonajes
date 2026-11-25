@@ -2176,8 +2176,20 @@ PrefabInstance:
       value: -8
       objectReference: {fileID: 0}
     - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: riegosNecesarios
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: tiempoCrecimiento
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoEntreRiegos
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoParaSecarse
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name
@@ -2249,8 +2261,20 @@ PrefabInstance:
       value: -3.6
       objectReference: {fileID: 0}
     - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: riegosNecesarios
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: tiempoCrecimiento
       value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoEntreRiegos
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoParaSecarse
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name
@@ -2393,7 +2417,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: tiempoCrecimiento
-      value: 4
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoEntreRiegos
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 5266799549557707747, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
+      propertyPath: tiempoParaSecarse
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 6404498607976974032, guid: 48503eaeee314aa43b70e542f3a52656, type: 3}
       propertyPath: m_Name

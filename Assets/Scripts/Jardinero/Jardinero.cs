@@ -37,7 +37,7 @@ public class Jardinero : MonoBehaviour
 
     public bool LlevaFlor => florEnMano != null;
 
-    private void Awake()
+    private void Awake()  //Debug de los diferentes errores que pueden suceder
     {
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         percepcion = GetComponent<PercepcionJardinero>();
@@ -105,7 +105,7 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return false;
 
         // Buscar la maceta más cercana que necesite agua
-        macetaParaRegar = percepcion.BuscarMaceta(m => m.NecesitaAgua);
+        macetaParaRegar = percepcion.BuscarMaceta(m => m.PuedeRegarse);
 
         // Comprobar que existe una maceta y que hay agua
         bool resultado = macetaParaRegar != null && regadera.TieneAgua;
@@ -181,7 +181,7 @@ public class Jardinero : MonoBehaviour
         return !ocupado;
     }
 
-    // ACCIONES    
+    // ====== ACCIONES ==================    
     public void IrARegar()
     {
         if (ocupado) return;
@@ -217,36 +217,39 @@ public class Jardinero : MonoBehaviour
     {
         if (ocupado) return;
 
-        // Comprobar que existe una maceta
         if (macetaParaRegar == null) return;
 
-        // Comprobar que el jardinero ha llegado
         if (!EnDestino()) return;
 
-        // Comprobar que la maceta sigue necesitando agua
         if (!macetaParaRegar.NecesitaAgua)
         {
             macetaParaRegar = null;
             puntoObjetivo = null;
-            Debug.Log("La maceta ya no necesita agua");
             return;
         }
 
-        // Comprobar que queda agua
         if (!regadera.TieneAgua)
         {
             Debug.Log("La regadera está vacía");
             return;
         }
 
-        // Gastar agua y regar
-        if (regadera.GastarUna())
-        {         
-            macetaParaRegar.Regar();
+        // Primero intentamos regar la maceta
+        if (macetaParaRegar.Regar())
+        {
+            // Solo gastamos agua si el riego ha sido aceptado
+            regadera.GastarUna();
+
             ocultarRegadera = false;
             ActualizarVisibilidadRegadera();
+
             IniciarAccion(duracionAccion);
+
             Debug.Log("Maceta regada correctamente");
+        }
+        else
+        {
+            Debug.Log("Todavía no se puede regar la maceta");
         }
     }
 
@@ -373,7 +376,7 @@ public class Jardinero : MonoBehaviour
 
     public void Nada() { Debug.Log("estoy en Buscar"); }
 
-    // ================== INTERNO ==================
+    // ============= INTERNO ==================
     private void IniciarAccion(float duracion)
     {
         if (ocupado) return;
