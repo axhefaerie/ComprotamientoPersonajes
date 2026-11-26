@@ -735,7 +735,7 @@ MonoBehaviour:
         references:
         - fieldName: Action
           value:
-            rid: 891130544744300636
+            rid: -2
           fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
             Culture=neutral, PublicKeyToken=null
         parentIds:
@@ -763,19 +763,6 @@ MonoBehaviour:
         - 6235486c-e116-4cd6-864d-f3f299692f40
         childIds:
         - 02047930-f3f1-4700-b8b5-eab80f6b4ecd
-      - name: Prueba
-        id: 04b3a5d0-f9ce-4065-8959-9d95febc60e4
-        position: {x: -819, y: -181}
-        node:
-          rid: 891130544744300631
-        references:
-        - fieldName: Action
-          value:
-            rid: 891130544744300632
-          fieldType: BehaviourAPI.Core.Actions.Action, BehaviourAPI.Core, Version=0.0.0.0,
-            Culture=neutral, PublicKeyToken=null
-        parentIds: []
-        childIds: []
       - name: IrARecargar
         id: 4f23fcd1-807c-4dc4-97c7-56695e3a181a
         position: {x: 998, y: -156}
@@ -1257,21 +1244,6 @@ MonoBehaviour:
     - rid: 891130425675612245
       type: {class: State, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
       data: 
-    - rid: 891130544744300631
-      type: {class: State, ns: BehaviourAPI.StateMachines, asm: BehaviourAPI.StateMachines}
-      data: 
-    - rid: 891130544744300632
-      type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
-      data:
-        method:
-          componentName: Jardinero
-          methodName: LimpiarObjetivo
-    - rid: 891130544744300636
-      type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
-      data:
-        method:
-          componentName: Jardinero
-          methodName: Nada
     - rid: 2592758923749228545
       type: {class: SimpleAction, ns: BehaviourAPI.UnityToolkit.GUIDesigner.Framework, asm: BehaviourAPI.UnityToolkit.GUIDesigner.Framework}
       data:
