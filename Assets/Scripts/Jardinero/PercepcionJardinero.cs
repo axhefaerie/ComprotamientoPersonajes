@@ -2,12 +2,11 @@ using UnityEngine;
 using System;
 
 // Para saber que tiene q hacer
-
 public class PercepcionJardinero : MonoBehaviour
 {
     [SerializeField] private float radio = 10f;     // Radio de alcance
 
-    private readonly Collider2D[] buffer = new Collider2D[32];
+    private readonly Collider2D[] buffer = new Collider2D[32];      // Guarda los colliders de los objetos de su alrededor
 
     public Maceta BuscarMaceta(Func<Maceta, bool> filtro)
     {
@@ -15,6 +14,7 @@ public class PercepcionJardinero : MonoBehaviour
         float mejorDist = float.MaxValue;
         Vector2 origen = transform.position;
 
+        // Busca el objeto más cercano dentro del radio que cumpla ser una maceta
         int n = Physics2D.OverlapCircleNonAlloc(origen, radio, buffer);
         for (int i = 0; i < n; i++)
         {
@@ -33,6 +33,7 @@ public class PercepcionJardinero : MonoBehaviour
         float mejorDist = float.MaxValue;
         Vector2 origen = transform.position;
 
+        // Se hace lo mismo pero buscando las distintas zonas (grifo/encimera..)
         int n = Physics2D.OverlapCircleNonAlloc(origen, radio, buffer);
         for (int i = 0; i < n; i++)
         {

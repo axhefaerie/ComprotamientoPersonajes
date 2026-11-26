@@ -4,6 +4,7 @@ public class Maceta : MonoBehaviour
 {
     public static event System.Action<Maceta> OnNecesitaAtencion;
 
+    // Variables de las macetas
     [SerializeField] private float tiempoCrecimiento = 40f;            // tiempo qeu tarda en crecer
     [SerializeField] private int riegosNecesarios = 3;         // Veces que necesita ser regada para crecer    
     [SerializeField] private GameObject prefabFlor;            // Prefab de la flor
@@ -11,14 +12,12 @@ public class Maceta : MonoBehaviour
     [SerializeField] private float tiempoParaSecarse = 40f;          // Tiempo que tarda en volver a pedir agua
     [SerializeField] private float tiempoEntreRiegos = 30f; // Tiempo de espera entre riegos
 
-
-    [Header("Bocadillos de estado")]
+    // Variables para el bocadillo que dice al jugador que está pasando con la maceta
     [SerializeField] private SpriteRenderer bocadilloRenderer;
     [SerializeField] private Sprite spriteFaltaSemilla;
     [SerializeField] private Sprite spriteFaltaAgua;
     [SerializeField] private Sprite spriteFaltaEsperar;
 
-    [Header("Destellos al florecer")]
     [SerializeField] private GameObject destellosObjeto;
     [SerializeField] private Animator destellosAnimator;
 
@@ -30,13 +29,14 @@ public class Maceta : MonoBehaviour
      private GameObject florInstanciada;        // Flor
     private float tiempoUltimoRiego; // Tiempo que ha pasado desde el último riego
 
-
-
     public bool EstaVacia => !tieneFlor && !creciendo;      // Devuelve si la maceta está vacía (si no tiene ninguna flor y si no hay ninguna planta creciendo)
     public bool NecesitaAgua => creciendo && riegosRecibidos < riegosNecesarios;
     public bool PuedeRegarse => NecesitaAgua && Time.time - tiempoUltimoRiego >= tiempoEntreRiegos;// Devuelve si necesita agua (si está creciendo y si ha recibido menos riegos de lo nececsario)
     public bool TieneFlorLista => tieneFlor;    // Devuelve si tiene la flor lista para recoger
 
+    // PAra el slider
+    public bool MostrarBarra => creciendo && !PuedeRegarse;
+    public bool EnFaseDeRiegos => creciendo && riegosRecibidos < riegosNecesarios;
     private void Start()
     {
         if (destellosObjeto != null) destellosObjeto.SetActive(false);
@@ -82,7 +82,6 @@ public class Maceta : MonoBehaviour
         sequedad = 0f;
         tiempoUltimoRiego = -tiempoEntreRiegos;
 
-
         if (destellosObjeto != null) destellosObjeto.SetActive(false);
         ActualizarBocadillo();
         OnNecesitaAtencion?.Invoke(this);
@@ -94,7 +93,6 @@ public class Maceta : MonoBehaviour
         if (!NecesitaAgua) return false;
         if (Time.time - tiempoUltimoRiego < tiempoEntreRiegos) 
             return false;  // Evita regar demasiado rápido
-        
         
         riegosRecibidos++;
         sequedad = 0f;
@@ -129,7 +127,7 @@ public class Maceta : MonoBehaviour
         riegosRecibidos = 0;
         cronometro = 0f;
 
-        if (destellosObjeto != null)
+        if (destellosObjeto != null) 
             destellosObjeto.SetActive(false);
 
         ActualizarBocadillo();
@@ -146,6 +144,7 @@ public class Maceta : MonoBehaviour
         return f;
     }
 
+    // Actualiza el bocadillo para mostrar el estado de la maceta
     private void ActualizarBocadillo()
     {
         if (bocadilloRenderer == null) return;
@@ -162,16 +161,40 @@ public class Maceta : MonoBehaviour
             bocadilloRenderer.sprite = spriteFaltaAgua;
             bocadilloRenderer.enabled = true;
         }
-        else if (NecesitaAgua && !PuedeRegarse && spriteFaltaEsperar != null)
-        {
-            // Todavía está esperando para poder recibir otro riego
-            bocadilloRenderer.sprite = spriteFaltaEsperar;
-            bocadilloRenderer.enabled = true;
-        }
         else
         {
-            // No necesita mostrar ningún bocadillo
+            // No necesita mostrar ningún bocadillo mientras espera entre riegos/crece flor o con flor
             bocadilloRenderer.enabled = false;
+        }
+    }
+
+    // Método para el slider, para indicar su progreso de secado e indicar cuando hace falta volver a regarlo
+    public float ProgresoSecado
+    {
+        get
+        {
+            if (!creciendo || riegosRecibidos >= riegosNecesarios) return 0f;
+            return Mathf.Clamp01(sequedad / tiempoParaSecarse);
+        }
+    }
+
+    // Método para el slider pero para indicar cuanto falta para el crecimiento de la flor una vez regada las veces necesarias
+    public float ProgresoCrecimiento
+    {
+        get
+        {
+            if (!creciendo || riegosRecibidos < riegosNecesarios) return 0f;
+            return Mathf.Clamp01(cronometro / tiempoCrecimiento);
+        }
+    }
+
+    // Método que indica cual es el progreso actual de la maceta (si está creciendo o si necesita regados todavia)
+    public float ProgresoActual
+    {
+        get
+        {
+            if (EstaVacia || tieneFlor) return 0f;
+            return riegosRecibidos >= riegosNecesarios ? ProgresoCrecimiento : ProgresoSecado;
         }
     }
 }

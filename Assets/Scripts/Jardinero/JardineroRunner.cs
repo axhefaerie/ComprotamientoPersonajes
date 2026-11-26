@@ -11,16 +11,12 @@ namespace BehaviourAPI.UnityToolkit.Demos
     {
         private Jardinero jardinero;
         private PushPerception _reiniciar;
-
         private PushPerception _atencion;
-
         private bool _arrancado;
 
         protected override void Init()
         {
-            Debug.Log("Init del runner");
             jardinero = GetComponent<Jardinero>();
-            Debug.Log($"jardinero = {(jardinero != null ? "OK" : "NULL")}");
             Maceta.OnNecesitaAtencion += AlNecesitarAtencion;
             base.Init();
         }
@@ -45,19 +41,18 @@ namespace BehaviourAPI.UnityToolkit.Demos
             Maceta.OnNecesitaAtencion -= AlNecesitarAtencion;
         }
 
+        // Si una maceta necesita atenbción, se guarda la maceta en la liskta de pendientes y se llama a atención pusch
         private void AlNecesitarAtencion(Maceta maceta)
         {
-            Debug.Log($"Aviso de {maceta.name} · push = {(_atencion != null ? "OK" : "NULL")}");
             jardinero.RegistrarMacetaPendiente(maceta);
             _atencion?.Fire();
         }
 
+        // Añade las percepciones push
         protected override void ModifyGraphs( Dictionary<string, BehaviourGraph> graphMap, Dictionary<string, PushPerception> pushPerceptionMap)
         {
             if (pushPerceptionMap.TryGetValue("reiniciar", out var p)) _reiniciar = p;
             if (pushPerceptionMap.TryGetValue("atencion", out var a)) _atencion = a;
-
-            Debug.Log($"Pushes asignadas · atencion = {(_atencion != null ? "OK" : "NULL")}");
         }
     }
 }
