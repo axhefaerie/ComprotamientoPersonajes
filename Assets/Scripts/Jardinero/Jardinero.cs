@@ -3,11 +3,16 @@ using UnityEngine;
 
 public class Jardinero : MonoBehaviour
 {
+    // Donde aparece el jardinero
+    [SerializeField] private Collider2D zonaAparicion;   // área donde puede aparecer
+    [SerializeField] private float margen = 0.5f;
+
     // Referencias a objetos de la escena
     [SerializeField] private Regadera regadera;
     [SerializeField] private Encimera encimera;
     [SerializeField] private Transform puntoMano;
     [SerializeField] private Vector3 escalaFlorEnMano = Vector3.one;
+    [SerializeField] private GameObject bolsaSemillas;
 
     // Movimiento del Jardinero
     [SerializeField] private float velocidad = 2f;
@@ -34,6 +39,7 @@ public class Jardinero : MonoBehaviour
     private float temporizador;
     private bool ocupado;
     private bool ocultarRegadera;
+    private bool ocultarBolsa = true;
 
     public bool LlevaFlor => florEnMano != null;
 
@@ -48,6 +54,8 @@ public class Jardinero : MonoBehaviour
     {
         var m = percepcion.BuscarMaceta(x => true);
         var g = percepcion.BuscarZona(TipoZona.Grifo);
+
+        ColocarAleatorio();     // Se coloca en un punto aleatorio
     }
 
     private void Update()
@@ -74,6 +82,19 @@ public class Jardinero : MonoBehaviour
         // Si no está ocupado, puede desplazarse
         if (puntoObjetivo != null)
             Avanzar();  
+    }
+
+    // Método qeu coloca en un punto aleatorio al jardinero cada vez que se inicia (reinicia)
+    private void ColocarAleatorio()
+    {
+        if (zonaAparicion == null) return;
+
+        Bounds b = zonaAparicion.bounds;
+
+        float x = Random.Range(b.min.x + margen, b.max.x - margen);
+        float y = Random.Range(b.min.y + margen, b.max.y - margen);
+
+        transform.position = new Vector3(x, y, transform.position.z);
     }
 
     // PERCEPCIONES
@@ -153,6 +174,7 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = false;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
 
         // Comprobar que existe una maceta objetivo
@@ -176,7 +198,9 @@ public class Jardinero : MonoBehaviour
             regadera.GastarUna();
 
             ocultarRegadera = false;
+            ocultarBolsa = true;
             ActualizarVisibilidadRegadera();
+            ActualizarVisibilidadBolsa();
 
             IniciarAccion(duracionAccion);
         }
@@ -188,7 +212,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = false;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         var grifo = percepcion.BuscarZona(TipoZona.Grifo);
         if (grifo != null)
@@ -203,7 +229,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = false;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         regadera.Recargar();
         IniciarAccion(duracionAccion);
@@ -215,7 +243,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         if (macetaParaRecoger == null) return;
         puntoObjetivo = macetaParaRecoger.GetComponent<ZonaInteraccion>().PuntoUso;
@@ -230,7 +260,9 @@ public class Jardinero : MonoBehaviour
         if (macetaParaRecoger == null) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         macetaParaRecoger.RecogerFlor();
         florEnMano = macetaParaRecoger.SacarFlorVisual(puntoMano);
@@ -247,7 +279,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         if (encimera != null)
             puntoObjetivo = encimera.transform;
@@ -262,7 +296,9 @@ public class Jardinero : MonoBehaviour
         if (florEnMano == null) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = true;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         encimera.Depositar(florEnMano);
         florEnMano = null;
@@ -277,7 +313,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = false;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         puntoObjetivo = macetaParaReplantar.GetComponent<ZonaInteraccion>().PuntoUso;
         Avanzar();
@@ -289,7 +327,9 @@ public class Jardinero : MonoBehaviour
         if (ocupado) return;
 
         ocultarRegadera = true;
+        ocultarBolsa = false;
         ActualizarVisibilidadRegadera();
+        ActualizarVisibilidadBolsa();
 
         macetaParaReplantar.PlantarSemilla();
         IniciarAccion(duracionAccion);
@@ -354,5 +394,13 @@ public class Jardinero : MonoBehaviour
         if (regadera == null) return;
         bool visible = !ocultarRegadera && !LlevaFlor;
         regadera.EstablecerVisible(visible);
+    }
+
+    // Método que permite hacer visible e invisible la bolsa de semillas
+    private void ActualizarVisibilidadBolsa()
+    {
+        if (bolsaSemillas == null) return;
+        bool visible = !ocultarBolsa && !LlevaFlor;
+        bolsaSemillas.SetActive(visible);
     }
 }

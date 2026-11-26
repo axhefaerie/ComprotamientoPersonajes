@@ -65,7 +65,6 @@ public class Maceta : MonoBehaviour
         if (sequedad >= tiempoParaSecarse)
         {
             sequedad = 0f;
-            if (riegosRecibidos > 0) riegosRecibidos--;   // pierde un riego
             OnNecesitaAtencion?.Invoke(this);
         }
 

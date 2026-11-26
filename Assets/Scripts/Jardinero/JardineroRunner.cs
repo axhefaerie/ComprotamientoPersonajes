@@ -1,9 +1,8 @@
 using BehaviourAPI.Core;
-using BehaviourAPI.Core.Perceptions;
-using BehaviourAPI.UnityToolkit;
 using BehaviourAPI.UnityToolkit.GUIDesigner.Runtime;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BehaviourAPI.UnityToolkit.Demos
 {
@@ -26,12 +25,17 @@ namespace BehaviourAPI.UnityToolkit.Demos
             if (!_arrancado && _atencion != null)
             {
                 _arrancado = true;
-                Debug.Log("Disparo atencion");
                 _atencion.Fire();
             }
 
-            if (_reiniciar != null && Input.GetKeyDown(KeyCode.R))
+            if (_reiniciar != null && Input.GetKeyDown(KeyCode.R)) { 
                 _reiniciar.Fire();
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
 
             base.OnUpdated();
         }
